@@ -7,4 +7,5 @@ create table RedditComments(
 	Body varchar(1000000)
 );
 
--- select * from RedditComments
+-- select count(*) from RedditComments
+-- select body from RedditComments

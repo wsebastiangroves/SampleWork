@@ -5,63 +5,60 @@ Created on Wed Jul 17 09:21:29 2019
 
 @author: wesgroves
 """
-import zstandard as zstd
-import json
-import psycopg2
+import psycopg2 #Connects python to postgresql
 import re
-import os
 import praw #Python Reddit API Wrapper
-import pandas as pd
 import datetime as dt
 
-#os.chdir("/Volumes/FreeAgent Drive/reddit data") #my external hard drive
+def FromUTC(asdf):
+    return dt.datetime.fromtimestamp(asdf)
 
-# Credit on reddit goes to 'Watchful1' for the decompression version of the data stream below:
-# https://www.reddit.com/r/pushshift/comments/ajmcc0/information_and_code_examples_on_how_to_use_the/ef012vk/?utm_source=share&utm_medium=web2x
-
-with open("RC_2019-03.zst", 'rb') as fh: #I set my working directory to the file's location
-    dctx = zstd.ZstdDecompressor()
-    with dctx.stream_reader(fh) as reader:
-        previous_line = ""
-        pb = 0
-        while True:
-            chunk = reader.read(65536)
-            if not chunk:
+def SubredditToStorage(subred):
+    
+    #Placeholder Login information, the following is required and must be uncommented and filled out
+    #reddit = praw.Reddit(client_id='PERSONAL_USE_SCRIPT_14_CHARS', \
+    #                     client_secret='SECRET_KEY_27_CHARS ', \
+    #                     user_agent='YOUR_APP_NAME', \
+    #                     username='YOUR_REDDIT_USER_NAME', \
+    #                     password='YOUR_REDDIT_LOGIN_PASSWORD')
+ 
+    
+    sbrd = reddit.subreddit(subred)
+    try:
+        connection = psycopg2.connect(user = "postgres",
+                                      password = ,
+                                      host = "localhost",
+                                      port = "5432",
+                                      database = "postgres")
+        cursor = connection.cursor()
+        i=0
+        for comment in sbrd.stream.comments(skip_existing=True):   
+            i += 1
+            query = "insert into RedditComments (CommentCreatedUTC, Subreddit, Body) values ("+ \
+                                                str(int(comment.created_utc))+",'"+ \
+                                                str(comment.subreddit)+"','"+ \
+                                                re.sub("'", '"', comment.body)+"')"
+            cursor.execute(query)
+            connection.commit()
+            print(f'vvvPosted Timestamp: {FromUTC(comment.created_utc)}\n\n^^^Post: '+comment.body+'\n\n')
+            print(f'comment#: {i}\n\n')
+            if i == 1:
+                print(f"goal of {i} reached")
                 break
-            #If embedded json then split, process, and store
-            #DO THAT AFTER LOADING SOME INTO POSTGRESQL FIRST!!!
-            string_data = chunk.decode('utf-8')
-            lines = string_data.split("\n")
-            #lines = f"{[lines]}"
-            for i, line in enumerate(lines[:-1]):
-                if i == 0:
-                    line = previous_line + line
-                object = json.loads(line)        
-                try:
-                    connection = psycopg2.connect(user = "postgres",
-                                                  password = "Ks190O20?!",
-                                                  host = "localhost",
-                                                  port = "5432",
-                                                  database = "postgres")
-                    cursor = connection.cursor()
+    except (Exception, psycopg2.Error) as error :
+        print ("Error while connecting to PostgreSQL", error)
+    finally:
+        #closing database connection.
+            if(connection):
+                cursor.close()
+                connection.close()  
+    return;
                     
-                    # Print PostgreSQL version
-                    query = 'insert into RedditComments (CommentCreatedUTC, Subreddit, Body) values ('+ \
-                                                            str(object['created_utc'])+",'"+ \
-                                                            object['subreddit']+"','"+ \
-                                                            re.sub("'", "", object['body'])+"')"
-                    cursor.execute(query)
-                    connection.commit()
-                except (Exception, psycopg2.Error) as error :
-                    print ("Error while connecting to PostgreSQL", error)
-                finally:
-                    #closing database connection.
-                        if(connection):
-                            cursor.close()
-                            connection.close()            
-            previous_line = lines[-1]
-            pb += 65536
-            print(f"{round(pb/14641003798, 4)}") #cool Python 3.6 feature
-            
-#chunk = dctx.stream_reader(open("RC_2019-03.zst", 'rb')).read(65536)
-
+                    
+#Placeholder Login information
+#reddit = praw.Reddit(client_id='PERSONAL_USE_SCRIPT_14_CHARS', \
+#                     client_secret='SECRET_KEY_27_CHARS ', \
+#                     user_agent='YOUR_APP_NAME', \
+#                     username='YOUR_REDDIT_USER_NAME', \
+#                     password='YOUR_REDDIT_LOGIN_PASSWORD')
+ 
