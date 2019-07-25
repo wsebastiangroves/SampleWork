@@ -3,9 +3,9 @@
 create table RedditComments(
 	ID int generated always as identity,
 	CommentCreatedUTC int,
-	Subreddit char(1000000),
-	Body varchar(1000000)
+	Subreddit char(21), --21 is the current maximum length of a subreddit name (2019)
+	Body varchar(100000)
 );
 
 -- select count(*) from RedditComments
--- select body from RedditComments
+-- select subreddit from RedditComments

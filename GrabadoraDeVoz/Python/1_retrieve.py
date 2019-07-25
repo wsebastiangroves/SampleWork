@@ -13,14 +13,14 @@ import datetime as dt
 def FromUTC(asdf):
     return dt.datetime.fromtimestamp(asdf)
 
-def SubredditToStorage(subred):
+def SubredditStorage(subred, goal):
     
-    #Placeholder Login information, the following is required and must be uncommented and filled out
-    #reddit = praw.Reddit(client_id='PERSONAL_USE_SCRIPT_14_CHARS', \
-    #                     client_secret='SECRET_KEY_27_CHARS ', \
-    #                     user_agent='YOUR_APP_NAME', \
-    #                     username='YOUR_REDDIT_USER_NAME', \
-    #                     password='YOUR_REDDIT_LOGIN_PASSWORD')
+#Placeholder Login information
+#reddit = praw.Reddit(client_id='PERSONAL_USE_SCRIPT_14_CHARS', \
+#                     client_secret='SECRET_KEY_27_CHARS ', \
+#                     user_agent='YOUR_APP_NAME', \
+#                     username='YOUR_REDDIT_USER_NAME', \
+#                     password='YOUR_REDDIT_LOGIN_PASSWORD')
  
     
     sbrd = reddit.subreddit(subred)
@@ -34,15 +34,14 @@ def SubredditToStorage(subred):
         i=0
         for comment in sbrd.stream.comments(skip_existing=True):   
             i += 1
-            query = "insert into RedditComments (CommentCreatedUTC, Subreddit, Body) values ("+ \
-                                                str(int(comment.created_utc))+",'"+ \
-                                                str(comment.subreddit)+"','"+ \
-                                                re.sub("'", '"', comment.body)+"')"
-            cursor.execute(query)
+            query = "INSERT INTO RedditComments (CommentCreatedUTC, Subreddit, Body) VALUES (%s, %s, %s)"
+            cursor.execute(query, (str(int(comment.created_utc)),\
+                                   str(comment.subreddit).strip(),\
+                                   re.sub("'", '"', comment.body)))
             connection.commit()
             print(f'vvvPosted Timestamp: {FromUTC(comment.created_utc)}\n\n^^^Post: '+comment.body+'\n\n')
             print(f'comment#: {i}\n\n')
-            if i == 1:
+            if i == goal:
                 print(f"goal of {i} reached")
                 break
     except (Exception, psycopg2.Error) as error :
