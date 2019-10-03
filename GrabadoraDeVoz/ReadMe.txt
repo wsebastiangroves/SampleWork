@@ -2,6 +2,18 @@
 *GrabadoraDeVoz ReadMe.txt*
 ***************************
 
+The original purpose of this tool was to utilize Reddit user comment data to create sentiment analyses across 'subreddits' (sub-forums for specific topics). The idea is to first 'ask' a subreddit to 'discuss' a topic and to observationally compare the short discussions across subreddits for each topic. The second step is to generate an actual sentiment score for comments, different scores for the same topic between subreddits could reveal interesting insights. 
+
+The final idea could be expanded to an assessment tool usable on any larger communities. 
+
+
+
+********
+Assorted Data Documentation:
+********
+
+
+
 Comment Sort Types:
 Best - A prediction based on the proportion of upvotes/downvotes (see: http://www.evanmiller.org/how-not-to-sort-by-average-rating.html)
 Top - Sheer number of current votes
