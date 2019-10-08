@@ -8,7 +8,7 @@ library(plotly) #plot_ly
 library(bizdays) #is.bizdays
 
 ##Import data---------------------
-Insurance_Rockstars_ <- read_excel("/Users/wesgroves/Desktop/Essentials/DATAXInsuranceComparisonInc.xlsx", 
+Insurance_Rockstars_ <- read_excel("/Users/wesgroves/Documents/GitHub/SampleWork/XInsuranceComparisonInc/DATAXInsuranceComparisonInc.xlsx", 
                                    sheet = "Transfers 2019", col_types = c("date", 
                                                      "numeric", "numeric", "numeric", 
                                                      "numeric", "numeric", "numeric", 
@@ -72,10 +72,15 @@ Insurance_Rockstars_ <- read_excel("/Users/wesgroves/Desktop/Essentials/DATAXIns
 Insurance_Rockstars_$Date <- as.Date(Insurance_Rockstars_$Date)
 year(Insurance_Rockstars_$Date) <- 2019 #Year needs to be 2019 (current year), listed as 2016 in excel
 
-##Create By Person Transfer Rate Dataframe--------------
-#Grab the columns of interest: Date and Transfers (Revenue and Margin columns eventually)
-# dataset <- Insurance_Rockstars_[grepl('Date|[rR]evenue|[Mm]argin_|[Mm]argin$', names(Insurance_Rockstars_))]
-dataset <- Insurance_Rockstars_[grepl('Date|Calls|Transfers|Revenue|Margin_|Margin$|Hours', names(Insurance_Rockstars_))]
+#Fix the names to represent the people
+dataset <- Insurance_Rockstars_
+names(dataset) <- c(names(dataset)[1], 
+                    paste(c("Blank", "Hours", "Calls", "Transfers", "Dial per Transfer", "Revenue", "Margin", "Margin%"),
+                          sort(rep(1:(length(names(dataset)[-1])/8), 8)))
+                    )
+
+#Grab the columns of interest
+dataset <- dataset[grepl('Date|Calls|Transfers|Revenue|Margin [0-9]*$|Hours', names(dataset))]
 
 #Remove rows where date is not in 2019 or date is NA
 dataset <- dataset[!(is.na(dataset$Date)|dataset$Date<=as.Date("2019-01-01")),]
@@ -93,16 +98,16 @@ cal <- create.calendar("Brazil/ANBIMA", holidaysANBIMA, weekdays=c("saturday", "
 #Create statistics of interest
 df <- dataset %>% 
   gather(key = Type, value = Value, -Date) %>% 
-  separate(Type, c('Type', 'Person'), "__") %>%
+  separate(Type, c('Type', 'Person'), " ") %>%
   mutate(Person = if_else(is.na(Person), as.numeric(0), as.numeric(Person))) %>%
   spread(key = Type, value = Value, fill = 0) %>% 
+  filter(Calls > 0 & Hours > 0) %>% 
   group_by(Date, Person) %>% 
   mutate(CallsPerTransfer = as.numeric(Calls)/as.numeric(Transfers),
          RevPerTransfer = as.numeric(Revenue)/as.numeric(Transfers),
          RevPerCall = as.numeric(Revenue)/as.numeric(Calls),
          PercentMargin = as.numeric(Margin)/as.numeric(Revenue)*100) %>%
-  ungroup() %>% 
-  filter(Calls > 0 & Hours > 0)
+  ungroup()
 
 df_overall <- df %>% 
   mutate(Margin = as.numeric(Margin),
