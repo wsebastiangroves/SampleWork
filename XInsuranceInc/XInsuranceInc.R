@@ -8,7 +8,7 @@ library(plotly) #plot_ly
 library(bizdays) #is.bizdays
 
 ##Import data---------------------
-Insurance_Rockstars_ <- read_excel("/Users/wesgroves/Documents/GitHub/SampleWork/XInsuranceComparisonInc/DATAXInsuranceComparisonInc.xlsx", 
+Insurance_Rockstars_ <- read_excel("CallData.xlsx", 
                                    sheet = "Transfers 2019", col_types = c("date", 
                                                      "numeric", "numeric", "numeric", 
                                                      "numeric", "numeric", "numeric", 

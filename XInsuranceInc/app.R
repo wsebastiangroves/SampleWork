@@ -1,4 +1,18 @@
-source('/Users/wesgroves/Documents/GitHub/SampleWork/XInsuranceComparisonInc/XInsuranceComparisonInc.R')
+#
+# This is a Shiny web application. You can run the application by clicking
+# the 'Run App' button above.
+#
+# Find out more about building applications with Shiny here:
+#
+#    http://shiny.rstudio.com/
+#
+
+##TO DO:
+##Put in selector for different date segmentations!
+##Draw new 'by individual' graph where vertical space is 100% of "effort"
+##
+
+source('XInsuranceInc.R')
 
 #Libraries
 library(shiny)
@@ -38,13 +52,13 @@ if (interactive()) {
               selected = 'Entire Team'),
             h5('Information: '),
             h6('You can double-click on an option in the legend to select or unselect all the other options.\n
-             You may also click and drag your arrow to zoom in.\n
-             Move your mouse to the top right of the graph for more tools.')
-          ),
+               You may also click and drag your arrow to zoom in.\n
+               Move your mouse to the top right of the graph for more tools.')
+            ),
           mainPanel(
             plotlyOutput("myPlot")
           )
-          )
+            )
       ),
       tabPanel(
         #Header
@@ -205,10 +219,10 @@ if (interactive()) {
         if ('Holidays' %in% input$factors) {
           output$analysis <- renderTable(df_holiday, rownames = T)
         } else {
-        output$analysis <- renderTable(df_weekday, rownames = T)
+          output$analysis <- renderTable(df_weekday, rownames = T)
         }
       }
-      })
+    })
     
     
     
