@@ -23,6 +23,7 @@ library(tidyr)
 #App
 if (interactive()) {
   
+  ###UI###
   ui <- fluidPage(
     
     titlePanel('X Insurance Comparison Inc.', 'X Insurance Comparison Inc.'),
@@ -88,10 +89,15 @@ if (interactive()) {
         
         )
       )
-  )
+  ) #end of UI
+  
+}
   
   
   
+  
+  
+  ###SERVER###
   server <- function(input, output, session) {
     
     ##############
@@ -227,7 +233,6 @@ if (interactive()) {
     
     
   } #end server function
+
+shinyApp(ui = ui, server = server)
   
-  shinyApp(ui = ui, server = server)
-  
-}

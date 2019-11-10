@@ -5,8 +5,8 @@ account: wsgroves
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 1428149
-bundleId: 2577786
+bundleId: 2577821
 url: https://wsgroves.shinyapps.io/XInsuranceComparisonInc/
-when: 1573401171.32462
+when: 1573402138.48563
 asMultiple: FALSE
 asStatic: FALSE
