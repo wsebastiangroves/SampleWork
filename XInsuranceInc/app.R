@@ -21,7 +21,7 @@ library(dplyr)
 library(tidyr)
 
 #App
-if (interactive()) {
+
   
   ###UI###
   ui <- fluidPage(
@@ -91,7 +91,7 @@ if (interactive()) {
       )
   ) #end of UI
   
-}
+
   
   
   
