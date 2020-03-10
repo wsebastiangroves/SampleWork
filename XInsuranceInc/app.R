@@ -26,14 +26,14 @@ library(tidyr)
   ###UI###
   ui <- fluidPage(
     
-    titlePanel('X Insurance Comparison Inc.', 'X Insurance Comparison Inc.'),
+    titlePanel('X Insurance Inc.', 'X Insurance Inc.'),
     
     tabsetPanel(
       tabPanel(
         
         #Header
         headerPanel(title = "Metrics",
-                    windowTitle = "X Insurance Comparison Inc. Metrics"),
+                    windowTitle = "X Insurance Inc. Metrics"),
         
         #Key Metrics
         sidebarLayout(
@@ -64,7 +64,7 @@ library(tidyr)
       tabPanel(
         #Header
         headerPanel("Analyses",
-                    "X Insurance Comparison Inc. Analyses"),
+                    "X Insurance Inc. Analyses"),
         
         #Analysis
         ##EDA - Exploratory Data Analysis
